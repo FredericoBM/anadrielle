@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biografia | Experiência Imersiva</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --rosa: #ffbcca; --verde: #a8bfa1; --slate: #334155; --bg: #fdfafb;
+            --white: #ffffff; --mouse-x: 50%; --mouse-y: 50%;
+            --glass: rgba(255, 255, 255, 0.75);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; cursor: none; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: var(--slate); overflow-x: hidden; min-height: 100vh; position: relative; }
+
+        /* Cursor Customizado */
+        #custom-cursor { position: fixed; width: 20px; height: 20px; background: var(--rosa); border-radius: 50%; pointer-events: none; z-index: 9999; mix-blend-mode: multiply; transition: transform 0.1s ease; }
+
+        /* --- SISTEMA DE SAMAMBAIAS --- */
+        .fern { position: fixed; width: 300px; height: auto; z-index: 1; pointer-events: none; overflow: visible; opacity: 0.6; }
+        .fern.top-left { top: -30px; left: -30px; }
+        .fern.top-right { top: -30px; right: -30px; transform: scaleX(-1); }
+        .fern.bottom-left { bottom: -30px; left: -30px; transform: scaleY(-1); }
+        .fern.bottom-right { bottom: -30px; right: -30px; transform: scale(-1); }
+
+        .fern-frond { fill: none; stroke: var(--verde); stroke-width: 2.5; stroke-linecap: round; transform-origin: center top; }
+        .sway-1 { animation: sway-wind 8s ease-in-out infinite alternate; }
+        .sway-2 { animation: sway-wind 6s ease-in-out infinite alternate-reverse; }
+        @keyframes sway-wind { 0% { transform: rotate(-4deg); } 100% { transform: rotate(5deg); } }
+
+        /* Navegação */
+        .nav-container { position: fixed; top: 30px; right: 40px; z-index: 3000; }
+        .nav-link { text-decoration: none; color: var(--slate); font-weight: 700; font-size: 0.85rem; padding: 12px 28px; background: var(--glass); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.5); border-radius: 100px; transition: 0.4s; display: flex; align-items: center; gap: 8px; }
+        .nav-link:hover { border-color: var(--rosa); transform: translateY(-3px); background: var(--white); box-shadow: 0 10px 25px rgba(255, 188, 202, 0.4); }
+
+        /* Blobs */
+        .blob { position: fixed; border-radius: 50%; filter: blur(80px); z-index: 0; opacity: 0.2; pointer-events: none; animation: float-blob 20s infinite alternate; }
+        @keyframes float-blob { from { transform: translate(0, 0); } to { transform: translate(40px, 60px); } }
+
+        /* Seções */
+        #content-wrapper { position: relative; z-index: 2; }
+        section { min-height: 60vh; display: flex; justify-content: center; align-items: center; padding: 60px 20px; }
+        
+        .dynamic-box {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 50px;
+            width: 90%; max-width: 1000px; padding: 45px;
+            background: var(--glass); backdrop-filter: blur(20px);
+            border-radius: 45px; border: 1px solid rgba(255,255,255,0.6);
+            transition: 0.5s ease;
+        }
+
+        .text-content h2 { font-size: 2.4rem; font-weight: 800; margin-bottom: 20px; letter-spacing: -1px; }
+        .visual-element { height: 350px; border-radius: 30px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+        .visual-element img { width: 100%; height: 100%; object-fit: cover; }
+        .badge { display: inline-block; padding: 8px 18px; background: var(--rosa); border-radius: 100px; font-size: 0.7rem; font-weight: 800; margin-bottom: 15px; }
+
+        @media (max-width: 768px) { .dynamic-box { grid-template-columns: 1fr; } .fern { width: 140px; } }
+    </style>
+</head>
+<body>
+    <div id="custom-cursor"></div>
+    <div class="blob" style="width: 400px; height: 400px; background: var(--rosa); top: 10%; left: 10%;"></div>
+    
+    <svg class="fern top-left" viewBox="0 0 400 500"><path class="fern-frond sway-1" d="M20,0 C60,80 10,200 120,350 M120,350 l-20,-30 M120,350 l20,-25 M100,300 l-25,-20 M80,250 l-30,-15" /></svg>
+    <svg class="fern bottom-right" viewBox="0 0 400 500"><path class="fern-frond sway-2" d="M20,0 C60,80 10,200 120,350 M120,350 l-20,-30 M100,300 l-25,-20" /></svg>
+
+    <nav class="nav-container"><a href="index.html" class="nav-link">← Voltar</a></nav>
+
+    <div id="content-wrapper">
+        <section>
+            <div class="dynamic-box">
+                <div class="text-content">
+                    <span class="badge">Quem Sou</span>
+                    <h2>Trajetória Criativa</h2>
+                    <p>Focada em unir a engenharia da funcionalidade com a arte do design imersivo.</p>
+                </div>
+                <div class="visual-element"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800"></div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const cursor = document.getElementById('custom-cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+    </script>
+</body>
+</html>
