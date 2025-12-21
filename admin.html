@@ -7,7 +7,26 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;700;800&display=swap" rel="stylesheet">
     <style>
         :root { --rosa: #ffbcca; --verde: #a8bfa1; --slate: #334155; --bg: #fdfafb; --white: #ffffff; --glass: rgba(255, 255, 255, 0.85); }
-        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+        
+        /* --- BLOQUEIO DE SELEÇÃO --- */
+        * { 
+            margin: 0; padding: 0; box-sizing: border-box; 
+            cursor: none; 
+            /* Impede a seleção de texto em toda a página */
+            user-select: none; 
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        /* Permite seleção APENAS nos campos de digitação para você conseguir editar */
+        input, textarea {
+            user-select: text !important;
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+        }
+
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: var(--slate); padding: 40px 20px; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
 
         /* Cursor Customizado */
@@ -29,12 +48,12 @@
         form.edit-mode { border-color: var(--verde); background: rgba(168, 191, 161, 0.1); }
 
         label { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: var(--verde); letter-spacing: 1px; }
-        input, textarea { padding: 15px; border: 1px solid rgba(0,0,0,0.05); border-radius: 15px; outline: none; font-family: inherit; font-size: 0.9rem; }
-        input:focus, textarea:focus { border-color: var(--rosa); background: white; }
+        input, textarea { padding: 15px; border: 1px solid rgba(0,0,0,0.05); border-radius: 15px; outline: none; font-family: inherit; font-size: 0.9rem; transition: 0.3s; }
+        input:focus, textarea:focus { border-color: var(--rosa); background: white; cursor: text; }
 
-        .btn-main { padding: 18px; background: var(--slate); color: white; border: none; border-radius: 15px; font-weight: 800; cursor: pointer; transition: 0.3s; }
+        .btn-main { padding: 18px; background: var(--slate); color: white; border: none; border-radius: 15px; font-weight: 800; cursor: none; transition: 0.3s; }
         .btn-main:hover { background: var(--rosa); color: var(--slate); transform: translateY(-3px); }
-        .btn-cancel { background: #eee; color: #666; margin-top: -10px; padding: 10px; border-radius: 10px; border: none; font-size: 0.7rem; font-weight: 800; cursor: pointer; display: none; }
+        .btn-cancel { background: #eee; color: #666; margin-top: -10px; padding: 10px; border-radius: 10px; border: none; font-size: 0.7rem; font-weight: 800; cursor: none; display: none; }
 
         /* Lista de Caixas */
         .list-header { font-weight: 800; font-size: 0.9rem; margin-bottom: 15px; display: block; color: var(--slate); opacity: 0.6; }
@@ -47,7 +66,7 @@
         .item-info div span { font-size: 0.7rem; color: var(--verde); font-weight: 800; text-transform: uppercase; }
 
         .actions { display: flex; gap: 8px; }
-        .btn-action { padding: 8px 15px; border-radius: 10px; border: none; font-size: 0.7rem; font-weight: 800; cursor: pointer; transition: 0.2s; }
+        .btn-action { padding: 8px 15px; border-radius: 10px; border: none; font-size: 0.7rem; font-weight: 800; cursor: none; transition: 0.2s; }
         .btn-edit { background: #e8f5e9; color: #2e7d32; }
         .btn-edit:hover { background: #2e7d32; color: white; }
         .btn-delete { background: #fff0f0; color: #d32f2f; }
@@ -56,7 +75,7 @@
         @media (max-width: 600px) { .list-item { flex-direction: column; gap: 15px; text-align: center; } .item-info { flex-direction: column; } }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false" oncopy="return false">
     <div id="custom-cursor"></div>
     
     <svg class="fern top-right" viewBox="0 0 400 500"><path class="fern-frond" d="M20,0 C60,80 10,200 120,350 M120,350 l-20,-30 M100,300 l-25,-20" /></svg>
@@ -86,8 +105,7 @@
         </form>
 
         <span class="list-header">Caixas Ativas no Home</span>
-        <div id="lista-caixas">
-            </div>
+        <div id="lista-caixas"></div>
     </div>
 
     <script>
@@ -99,22 +117,27 @@
         const formTitle = document.getElementById('form-title');
         const editMsg = document.getElementById('edit-msg');
 
-        let baseDeDados = JSON.parse(localStorage.getItem('site_caixas_local')) || [];
-        let editIndex = null; // Controla se estamos editando (-1 = novo)
+        // Bloqueio extra via Script para comandos de teclado (Ctrl+C, Ctrl+U, etc)
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && (e.key === 'c' || e.key === 'u' || e.key === 's' || e.key === 'p')) {
+                e.preventDefault();
+                return false;
+            }
+        });
 
-        // Cursor
+        let baseDeDados = JSON.parse(localStorage.getItem('site_caixas_local')) || [];
+        let editIndex = null;
+
         document.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';
         });
 
-        // Salvar no LocalStorage
         function salvar() {
             localStorage.setItem('site_caixas_local', JSON.stringify(baseDeDados));
             renderizarLista();
         }
 
-        // Renderizar Lista
         function renderizarLista() {
             lista.innerHTML = baseDeDados.length === 0 ? '<p style="font-size:0.8rem; opacity:0.5;">Nenhuma caixa criada.</p>' : "";
             baseDeDados.forEach((item, index) => {
@@ -136,10 +159,8 @@
             });
         }
 
-        // Submeter Formulário (Adicionar ou Atualizar)
         form.addEventListener('submit', function(e) {
             e.preventDefault();
-            
             const file = document.getElementById('fotoLocal').files[0];
             const reader = new FileReader();
 
@@ -172,26 +193,21 @@
             }
         });
 
-        // Preparar para Editar
         window.prepararEdicao = (index) => {
             editIndex = index;
             const item = baseDeDados[index];
-            
             document.getElementById('badge').value = item.badge;
             document.getElementById('titulo').value = item.titulo;
             document.getElementById('texto').value = item.texto;
-            
             form.classList.add('edit-mode');
             formTitle.innerText = "Editando Caixa";
             btnSubmit.innerText = "Salvar Alterações ✦";
             btnCancel.style.display = "block";
             editMsg.style.display = "block";
             document.getElementById('fotoLocal').required = false;
-
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
-        // Resetar Formulário
         window.resetForm = () => {
             editIndex = null;
             form.reset();
@@ -203,7 +219,6 @@
             document.getElementById('fotoLocal').required = true;
         };
 
-        // Remover
         window.remover = (index) => {
             if (confirm("Tem certeza que deseja excluir esta caixa permanentemente?")) {
                 baseDeDados.splice(index, 1);
