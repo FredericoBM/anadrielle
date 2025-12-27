@@ -39,15 +39,6 @@
         .blob { position: fixed; border-radius: 50%; filter: blur(80px); z-index: 0; opacity: 0.25; pointer-events: none; animation: float-blob 20s infinite alternate; }
         @keyframes float-blob { from { transform: translate(0, 0); } to { transform: translate(50px, 80px); } }
 
-        .fern { position: fixed; width: 160px; height: auto; z-index: 1; pointer-events: none; opacity: 0.5; }
-        @media (min-width: 768px) { .fern { width: 320px; opacity: 0.7; } }
-        .fern.top-left { top: -30px; left: -30px; }
-        .fern.top-right { top: -30px; right: -30px; transform: scaleX(-1); }
-        .fern.bottom-left { bottom: -30px; left: -30px; transform: scaleY(-1); }
-        .fern.bottom-right { bottom: -30px; right: -30px; transform: scale(-1); }
-        .fern-frond { fill: none; stroke: var(--verde); stroke-width: 2.5; stroke-linecap: round; animation: sway 8s ease-in-out infinite alternate; transform-origin: top; }
-        @keyframes sway { 0% { transform: rotate(-3deg); } 100% { transform: rotate(4deg); } }
-
         /* --- CABEÇALHO --- */
         .main-header {
             position: fixed; top: 0; left: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255,255,255,0.5); z-index: 3000; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
@@ -86,7 +77,7 @@
         .badge { display: inline-block; padding: 6px 16px; background: var(--rosa); border-radius: 100px; font-size: 0.65rem; font-weight: 800; margin-bottom: 12px; color: var(--slate); }
         .read-more-btn { color: var(--verde); font-weight: 800; font-size: 0.75rem; border: none; background: none; text-transform: uppercase; padding: 10px 0; transition: 0.3s; }
 
-        /* --- PILHA DE CARTAS --- */
+        /* --- PILHA DE CARTAS COLORIDAS --- */
         .visual-element { width: 100%; height: 280px; margin-top: 25px; position: relative; z-index: 1; }
         @media (min-width: 850px) { .visual-element { margin-top: 0; } }
 
@@ -101,8 +92,21 @@
             border-radius: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .visual-element::after { z-index: -1; transform: rotate(4deg) translate(10px, 10px); background: rgba(202, 168, 197, 0.9); }
-        .visual-element::before { z-index: -2; transform: rotate(-5deg) translate(-10px, 15px); background: rgba(165, 84, 147, 0.7); }
+        /* Carta Rosa (Meio) */
+        .visual-element::after { 
+            z-index: -1; 
+            transform: rotate(4deg) translate(10px, 10px); 
+            background: var(--rosa); 
+            opacity: 0.85;
+        }
+
+        /* Carta Verde (Fundo) */
+        .visual-element::before { 
+            z-index: -2; 
+            transform: rotate(-5deg) translate(-10px, 15px); 
+            background: var(--verde); 
+            opacity: 0.75;
+        }
 
         .dynamic-box:hover .visual-element img { transform: scale(1.05); }
         .dynamic-box:hover .visual-element::after { transform: rotate(7deg) translate(25px, 20px); }
@@ -117,6 +121,8 @@
 
     <div id="custom-cursor"></div>
     <div id="progress-bar"></div>
+    <div class="blob" style="width: 450px; height: 450px; background: var(--verde); top: -100px; right: -50px;"></div>
+    <div class="blob" style="width: 350px; height: 350px; background: var(--rosa); bottom: 100px; left: -50px;"></div>
 
     <header class="main-header">
         <div class="brand-logo">
