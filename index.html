@@ -17,11 +17,13 @@
             user-select: none !important; -webkit-user-select: none !important;
             -webkit-touch-callout: none !important; -webkit-tap-highlight-color: transparent;
         }
+
         @media (min-width: 1024px) {
             * { cursor: none !important; }
             body { cursor: none !important; }
             a, button, img, input, span, div { cursor: none !important; }
         }
+
         img { pointer-events: none; -webkit-user-drag: none; }
         html { scroll-behavior: smooth; }
         body { 
@@ -30,7 +32,6 @@
             overflow-x: hidden; min-height: 100vh; position: relative;
         }
 
-        /* Cursor Customizado */
         #custom-cursor { position: fixed; width: 22px; height: 22px; background: var(--rosa); border-radius: 50%; pointer-events: none; z-index: 9999; mix-blend-mode: multiply; transition: transform 0.1s ease; display: none; }
         @media (min-width: 1024px) { #custom-cursor { display: block; } }
 
@@ -76,7 +77,6 @@
             section:nth-child(even) .dynamic-box { flex-direction: row-reverse; text-align: right; }
             section:nth-child(even) .badge { align-self: flex-end; }
             .text-content { flex: 1.2; display: flex; flex-direction: column; justify-content: center; z-index: 5; }
-            /* Aumentei o espaço da imagem para caber as cartas atrás */
             .visual-element { flex: 0.9; height: 400px; }
         }
 
@@ -85,68 +85,31 @@
         .dynamic-box.expanded p { -webkit-line-clamp: unset; display: block; }
         .badge { display: inline-block; padding: 6px 16px; background: var(--rosa); border-radius: 100px; font-size: 0.65rem; font-weight: 800; margin-bottom: 12px; color: var(--slate); }
         .read-more-btn { color: var(--verde); font-weight: 800; font-size: 0.75rem; border: none; background: none; text-transform: uppercase; padding: 10px 0; transition: 0.3s; }
-        .read-more-btn:hover { color: var(--rosa); letter-spacing: 1px; }
 
-        /* --- VISUAL ELEMENT COM EFEITO DE PILHA DE CARTAS --- */
-        .visual-element { 
-            width: 100%; height: 280px; margin-top: 25px; 
-            position: relative; z-index: 1; /* Importante para ficar acima das "cartas" de trás */
-            /* Removido overflow:hidden e box-shadow do container principal */
-        }
+        /* --- PILHA DE CARTAS --- */
+        .visual-element { width: 100%; height: 280px; margin-top: 25px; position: relative; z-index: 1; }
         @media (min-width: 850px) { .visual-element { margin-top: 0; } }
 
-        /* A Imagem Principal (Carta do Topo) */
         .visual-element img { 
-            width: 100%; height: 100%; object-fit: cover; 
-            transition: all 0.6s ease;
-            border-radius: 25px; /* Arredondamento na imagem */
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); /* Sombra na imagem */
-            background: var(--white);
-            position: relative; z-index: 2; /* Garante que é a primeira */
+            width: 100%; height: 100%; object-fit: cover; transition: 0.6s;
+            border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            background: var(--white); position: relative; z-index: 2;
         }
         
-        /* Zoom suave ao passar o mouse */
+        .visual-element::before, .visual-element::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .visual-element::after { z-index: -1; transform: rotate(4deg) translate(10px, 10px); background: rgba(202, 168, 197, 0.9); }
+        .visual-element::before { z-index: -2; transform: rotate(-5deg) translate(-10px, 15px); background: rgba(165, 84, 147, 0.7); }
+
         .dynamic-box:hover .visual-element img { transform: scale(1.05); }
-
-        /* --- AS CARTAS DE TRÁS (Pseudo-elementos) --- */
-        .visual-element::before,
-        .visual-element::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(202, 168, 197, 0.9); /* Cor de carta, ligeiramente transparente */
-            border-radius: 25px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Efeito elástico suave */
-        }
-
-        /* Carta do Meio */
-        .visual-element::after {
-            z-index: -1;
-            transform: rotate(4deg) translate(10px, 10px);
-        }
-
-        /* Carta do Fundo */
-        .visual-element::before {
-            z-index: -2;
-            transform: rotate(-5deg) translate(-10px, 15px);
-            background: rgba(165, 84, 147, 0.7); /* Mais transparente */
-        }
-
-        /* Efeito de Espalhar ao Passar o Mouse */
-        .dynamic-box:hover .visual-element::after {
-            transform: rotate(7deg) translate(25px, 20px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.12);
-        }
-        .dynamic-box:hover .visual-element::before {
-            transform: rotate(-9deg) translate(-25px, 35px);
-             box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-        }
-        /* -------------------------------------------------- */
+        .dynamic-box:hover .visual-element::after { transform: rotate(7deg) translate(25px, 20px); }
+        .dynamic-box:hover .visual-element::before { transform: rotate(-9deg) translate(-25px, 35px); }
 
         #progress-bar { position: fixed; top: 0; width: 100%; height: 5px; background: linear-gradient(90deg, var(--rosa), var(--verde)); z-index: 4000; transform-origin: left; scale: 0 1; }
         .footer-box { background: var(--slate); color: var(--white); border-radius: 50px 50px 0 0; padding: 70px 20px; text-align: center; position: relative; z-index: 2; }
-        .social-item { padding: 12px 30px; border-radius: 100px; border: 1px solid rgba(255,255,255,0.2); color: white; text-decoration: none; font-size: 0.85rem; font-weight: 700; display: inline-block; margin: 8px; transition: 0.3s; }
     </style>
 </head>
 
@@ -154,22 +117,15 @@
 
     <div id="custom-cursor"></div>
     <div id="progress-bar"></div>
-    <div class="blob" style="width: 450px; height: 450px; background: var(--verde); top: -100px; right: -50px;"></div>
-    <div class="blob" style="width: 350px; height: 350px; background: var(--rosa); bottom: 100px; left: -50px;"></div>
-
-    <svg class="fern top-left" viewBox="0 0 400 500"><path class="fern-frond" d="M20,0 C60,80 10,200 120,350 M120,350 l-20,-30 M100,300 l-25,-20" /></svg>
-    <svg class="fern top-right" viewBox="0 0 400 500"><path class="fern-frond" d="M20,0 C60,80 10,200 120,350 M100,300 l-25,-20" /></svg>
-    <svg class="fern bottom-left" viewBox="0 0 400 500"><path class="fern-frond" d="M20,0 C60,80 10,200 120,350 M100,300 l-25,-20" /></svg>
-    <svg class="fern bottom-right" viewBox="0 0 400 500"><path class="fern-frond" d="M20,0 C60,80 10,200 120,350 M100,300 l-25,-20" /></svg>
 
     <header class="main-header">
-        <a href="index.html" class="brand-logo">
+        <div class="brand-logo">
             <div class="brand-icon">EI</div>
             <span>Exp. Imersiva</span>
-        </a>
+        </div>
         <nav class="header-nav">
             <a href="biograph.html" class="nav-link">✦ Bio</a>
-            <a href="#" onclick="abrirAdmin()" class="nav-link" style="background: var(--slate); color: white; border: none;">Admin</a>
+            <a href="#contato" class="nav-link">✉ Contato</a>
         </nav>
     </header>
 
@@ -180,8 +136,8 @@
     <footer id="contato" class="footer-box">
         <h2 style="margin: 15px 0 25px; font-size: 1.8rem;">Vamos conversar?</h2>
         <div class="social-links">
-            <a href="mailto:exemplo@email.com" class="social-item">E-mail</a>
-            <a href="https://www.instagram.com/anadriellevs/" class="social-item" target="_blank">Instagram</a>
+            <a href="mailto:exemplo@email.com" class="social-item" style="color: white; text-decoration: none; border: 1px solid rgba(255,255,255,0.2); padding: 10px 25px; border-radius: 100px;">E-mail</a>
+            <a href="https://www.instagram.com/anadriellevs/" class="social-item" style="color: white; text-decoration: none; border: 1px solid rgba(255,255,255,0.2); padding: 10px 25px; border-radius: 100px;">Instagram</a>
         </div>
     </footer>
 
@@ -251,8 +207,6 @@
             if (e.ctrlKey && (e.key === 'c' || e.key === 'u' || e.key === 'i' || e.key === 's')) e.preventDefault();
             if (e.key === 'F12') e.preventDefault();
         });
-        function abrirAdmin() { if (prompt("Autorização:") === "1234") window.location.href = "admin.html"; }
     </script>
 </body>
 </html>
-
